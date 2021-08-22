@@ -85,6 +85,7 @@ def get_multi_r_df(scaffold, dataframe):
     r_group_df
     new_df = pd.merge(dataframe,r_group_df,on='product_1_smiles')
     # get multi_r_df and single_r_df
+
     def has_multiple_rs(row, column_names):
         '''takes a row and returns True if multiple R groups'''
     
@@ -129,6 +130,8 @@ def get_R_list(scaffold,dataframe,column,r_number):
         PandasTools.RenderImagesInAllDataFrames(images=True)
         return frame
     # creat r_group_df
+
+    # ---- This should be its own function
     mols = [Chem.MolFromSmiles(smi) for smi in pd.unique(dataframe['product_1_smiles'])]
     Draw.MolsToGridImage(mols,molsPerRow=4)
     groups, unmatched = rdRGroupDecomposition.RGroupDecompose([scaffold],mols,asSmiles=False,asRows=False)
@@ -143,6 +146,10 @@ def get_R_list(scaffold,dataframe,column,r_number):
             mols_minus_unmatched.append(mol)
     r_group_df = PandasTools.RGroupDecompositionToFrame(groups, mols_minus_unmatched, include_core=False, redraw_sidechains=False)
     r_group_df
+
+    # ---- To Here
+
+    # ---- This should be a function, but make it work for any number of R groups
     def remove_H(mol, r_number=1):
         smi = Chem.MolToSmiles(mol)
         if smi == f'[H][*:{r_number}]':
@@ -155,6 +162,10 @@ def get_R_list(scaffold,dataframe,column,r_number):
     r_group_df['R4'] = r_group_df['R4'].apply(remove_H, r_number=4)
     r_group_df['R5'] = r_group_df['R5'].apply(remove_H, r_number=5)
     r_group_df
+
+    # ---- To here
+
+
     def show_smiles(mol):
         if mol== None:
             return None
@@ -168,6 +179,9 @@ def get_R_list(scaffold,dataframe,column,r_number):
     r_group_df
     new_df = pd.merge(dataframe,r_group_df,on='product_1_smiles')
     # get multi_r_df and single_r_df
+
+
+    # ---- This can be its own function
     def has_multiple_rs(row, column_names):
         '''takes a row and returns True if multiple R groups'''
     
@@ -188,22 +202,29 @@ def get_R_list(scaffold,dataframe,column,r_number):
     new_df['multiple_r'] = multiple_r
     multi_r_df = new_df[new_df['multiple_r']==True]
     single_r_df = new_df[new_df['multiple_r']==False]
+
+    # ---- To here
+
+
+    # ---- This code is now to getting the smiles for a particular R group
+    # ---- Can be its own function
+
     # remove the repeat product
     single_R_df = single_r_df.drop_duplicates("product_1_smiles")
+
     single_r_group_df=pd.DataFrame(single_R_df,columns=["Mol","R1","R2","R3","R4","R5"])
     
     R_group_df=pd.DataFrame(single_r_group_df,columns=["Mol",column]).dropna()
+
+    # Haven't we already done this above?
     # Change them to the smiles strings
     R_group_df[column+"_smiles"] = R_group_df[column].apply(show_smiles)
-    
-    # 
+
     R_list=R_group_df[column+"_smiles"].tolist()
     for i, sml in enumerate(R_list):
         if sml.endswith(f"[*:{r_number}]"):
              R_list[i] = R_list[i][:-5]
-    
 
-    
     return  R_list
 
 def get_conversion(scaffold,dataframe,column,r_number):
@@ -295,11 +316,14 @@ def get_conversion(scaffold,dataframe,column,r_number):
     
     R_group_df=pd.DataFrame(single_R_group_df,columns=["Mol",column]).dropna()
     R_group_df["product_1_smiles"] = R_group_df["Mol"].apply(show_smiles)
+
+
+    # We only want this last part - everything else is repeated.
+
     conversion_df = pd.merge(single_R_df,R_group_df,on='product_1_smiles')
     conversion_list=conversion_df["conversion"].tolist()
     new_conversions = [int(c) for c in conversion_list]
 
-    
     return  new_conversions
 
 def get_bond_angle(mol, r_group, debug=False):
