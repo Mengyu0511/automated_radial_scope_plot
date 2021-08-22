@@ -16,10 +16,13 @@ import math
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit import Geometry
 import rdkit
+
 def get_repeat_df(dataframe):
-    drop_duplicates_df=dataframe.drop_duplicates(['product_1_smiles'],keep=False)
-    repeat_df=dataframe.append(drop_duplicates_df).drop_duplicates(keep=False)
-    return repeat_df
+    """Ensures the dataframe only has one entry per product, by removing any duplicates"""
+
+    drop_duplicates_df = dataframe.drop_duplicates(subset=['product_1_smiles'], keep=False)
+
+    return drop_duplicates_df
 
 def get_multi_r_df(scaffold, dataframe):
     def groups_to_df(groups,mols,include_core=False,redraw_sidechains=False):
@@ -265,6 +268,7 @@ def get_conversion(scaffold,dataframe,column,r_number):
     r_group_df
     new_df = pd.merge(dataframe,r_group_df,on='product_1_smiles')
     # get multi_r_df and single_r_df
+
     def has_multiple_rs(row, column_names):
         '''takes a row and returns True if multiple R groups'''
     
@@ -297,7 +301,6 @@ def get_conversion(scaffold,dataframe,column,r_number):
 
     
     return  new_conversions
-
 
 def get_bond_angle(mol, r_group, debug=False):
     def show_atom_ids(mol, label):
