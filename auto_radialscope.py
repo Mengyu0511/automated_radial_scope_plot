@@ -35,7 +35,10 @@ default_r_setup = {'rest_label': "",  # Label of the atom in the radial scope pl
                 }
 
 
-def get_r_setup_dict(r_num, enzyme_data, enzyme_1, enzyme_2, scaffold, r_group_map, angle_per_wedge=15):
+def get_r_setup_dict(r_num, enzyme_data,
+                     enzymes, colours,
+                     scaffold, r_group_map,
+                     angle_per_wedge=15):
     r_dict = copy.deepcopy(default_r_setup)
     r_string = f"R{r_num}"
     num_wedges = len(enzyme_data[r_string])
@@ -47,8 +50,11 @@ def get_r_setup_dict(r_num, enzyme_data, enzyme_1, enzyme_2, scaffold, r_group_m
     r_dict['coverangle_wedges'] = angle_per_wedge * num_wedges
     bond_angle = get_bond_angle(scaffold, r_num)
     r_dict['startangle'] = calculate_r_scope_angle(bond_angle, num_wedges, angle_per_wedge)
-    r_dict['INNERLABEL'] = f"{enzyme_1} % conversion"
-    r_dict['OUTERLABEL'] = f"{enzyme_2} % conversion"
+    r_dict['INNERLABEL'] = f"{enzymes[0]} % conversion"
+    r_dict['OUTERLABEL'] = f"{enzymes[1]} % conversion"
+
+    r_dict['CMAPINNER'] = colours[0]
+    r_dict['CMAPOUTER'] = colours[1]
 
     r_dict['value_groups'] = list(enzyme_data[r_string].keys())
 
@@ -81,15 +87,17 @@ def get_enzyme_dict(enzyme_name, df, scaffold, activity_col='conversion'):
 
     return r_data
 
-def make_auto_radial_scope(enzyme_1, enzyme_2, df, scaffold_smi,
-                           activity_col='conversion', angle_per_wedge=15):
+def make_auto_radial_scope(enzymes, df, scaffold_smi,
+                           colours=['Blues', 'Greens'],
+                           activity_col='conversion',
+                           angle_per_wedge=15):
 
     # make scaffold_mol
     scaffold = Chem.MolFromSmiles(scaffold_smi)
 
     # get the r_group data for the two enzymes, save to dict
-    enz_1_data = get_enzyme_dict(enzyme_1, df, scaffold, activity_col=activity_col)
-    enz_2_data = get_enzyme_dict(enzyme_2, df, scaffold, activity_col=activity_col)
+    enz_1_data = get_enzyme_dict(enzymes[0], df, scaffold, activity_col=activity_col)
+    enz_2_data = get_enzyme_dict(enzymes[1], df, scaffold, activity_col=activity_col)
     combined_data = combine_enzyme_dict(enz_1_data, enz_2_data)
 
     # create radial scope settings
@@ -100,7 +108,10 @@ def make_auto_radial_scope(enzyme_1, enzyme_2, df, scaffold_smi,
     r_dicts = []
     r_group_map = create_r_group_map(scaffold)
     for r_num in r_group_map.keys():
-        r_setup_dict = get_r_setup_dict(r_num, combined_data, enzyme_1, enzyme_2, scaffold, r_group_map, angle_per_wedge=angle_per_wedge)
+        r_setup_dict = get_r_setup_dict(r_num, combined_data,
+                                        enzymes, colours,
+                                        scaffold, r_group_map,
+                                        angle_per_wedge=angle_per_wedge)
         if r_setup_dict is not None:
             r_dicts.append(r_setup_dict)
 
