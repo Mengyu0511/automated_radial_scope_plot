@@ -74,3 +74,8 @@ def get_bond_angle(mol, r_group, debug=False):
         print(f"Angle = {angle}")
 
     return angle
+
+def calculate_r_scope_angle(bond_angle, num_wedges, angle_per_wedge):
+
+    r_scope_angle = 270 - bond_angle + angle_per_wedge * num_wedges / 2
+    return r_scope_angle

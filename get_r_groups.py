@@ -61,7 +61,6 @@ def make_H_r_groups_none(r_group_df, r_groups):
 
     def remove_H(row, r_groups):
 
-        all_H = True
         for num in r_groups:
             r_string = f'R{num}'
             mol = row[r_string]
@@ -69,14 +68,6 @@ def make_H_r_groups_none(r_group_df, r_groups):
 
             if smi == f'[H][*:{num}]':
                 row[r_string] = None
-            else:
-                all_H = False
-
-        # If all the r's are H, then leave them as [H]
-        if all_H == True:
-            for num in r_groups:
-                r_string = f'R{num}'
-                row[r_string] = Chem.MolFromSmiles(f'[H][*:{num}]')
 
         return row
 
