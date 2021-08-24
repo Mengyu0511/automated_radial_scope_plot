@@ -18,6 +18,8 @@ def create_r_group_map(mol):
     Need a map to go from the R group number to the atom number
     This function creates that map as a dictionary.
     (The keys of dictionaries can't be numbers, so convert to str first for key)
+
+    r_group_map = {'1': 7, ...}
     """
 
     r_group_map = {}

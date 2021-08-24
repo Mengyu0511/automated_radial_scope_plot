@@ -21,27 +21,33 @@ def get_smiles_and_activity(df, r_groups, activity_col='conversion', to_int=True
         r = f"R{num}"
 
         # empty_dict to hold r group smiles and activity data
-        r_data[r] = {}
+        r_data[r] = {}   # {'R1': {} }
 
         # r_df - only rows where the r_group column is not none.
         r_df = df.dropna(subset=[smi_col])
 
         for index, row in r_df.iterrows():
             # get the smi for this r group
-            smi = row[smi_col]
-            smi = remove_r_from_smi(smi, num)
+            smi = row[smi_col]  # eg smi_col = "R1_smiles'
+            smi = remove_r_from_smi(smi, num)  # eg removes [*:1]
 
             # get the activity for this r group
-            activity = row[activity_col]
+            activity = row[activity_col]  # eg activity_col = 'conversion'
             if to_int == True:
-                activity = int(activity)
+                activity = int(activity)  # ensures its for example 50 rather than 50.0
 
             # add smi and activity to dict
-            r_data[r][smi] = activity
+            r_data[r][smi] = activity  # eg {'R1': {'C': 50}}
 
     return r_data
 
 def combine_enzyme_dict(enzyme_dict_1, enzyme_dict_2):
+    """
+    Combines the enzyme dicts
+                                  e1, e2
+    combined_data = {'R1': {'C': [50, 30]}}
+
+    """
 
     combined_data = {k: {} for k in enzyme_dict_1.keys()}
 

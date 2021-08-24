@@ -54,8 +54,8 @@ def make_H_r_groups_none(r_group_df, r_groups):
     To make the r_group_df easier to interpret,
     make any R_group which is just H into None.
 
-    r_group_strings comes from r_groups_from_scaffold
-    For example - r_group_strings = ['R1', 'R2', ...]
+    r_group comes from r_groups_from_scaffold
+    For example - r_group = [1, 2, ...]
 
     """
 

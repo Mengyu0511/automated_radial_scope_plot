@@ -39,7 +39,9 @@ def get_r_setup_dict(r_num, enzyme_data,
                      enzymes, colours,
                      scaffold, r_group_map,
                      angle_per_wedge=15):
+
     r_dict = copy.deepcopy(default_r_setup)
+
     r_string = f"R{r_num}"
     num_wedges = len(enzyme_data[r_string])
     if num_wedges == 0:
@@ -56,13 +58,13 @@ def get_r_setup_dict(r_num, enzyme_data,
     r_dict['CMAPINNER'] = colours[0]
     r_dict['CMAPOUTER'] = colours[1]
 
-    r_dict['value_groups'] = list(enzyme_data[r_string].keys())
+    r_dict['value_groups'] = list(enzyme_data[r_string].keys())  # {'R1': {'C': [50, 45]} }
 
-    activity_data = list(enzyme_data[r_string].values())
+    activity_data = list(enzyme_data[r_string].values()) # eg = [[50, 45], [13, 60], ..]
     r_dict['value_inner_circle'] = [val[0] for val in activity_data]
     r_dict['value_outer_circle'] = [val[1] for val in activity_data]
 
-    r_dict['attach_atom_id'] = r_group_map[str(r_num)]
+    r_dict['attach_atom_id'] = r_group_map[str(r_num)]  # eg R1 - atom_id = 7
 
     return r_dict
 
@@ -106,7 +108,7 @@ def make_auto_radial_scope(enzymes, df, scaffold_smi,
 
     # create radial_scope r_dicts, save as list
     r_dicts = []
-    r_group_map = create_r_group_map(scaffold)
+    r_group_map = create_r_group_map(scaffold)  # for example - r_group_map = {'1': 7, ...}
     for r_num in r_group_map.keys():
         r_setup_dict = get_r_setup_dict(r_num, combined_data,
                                         enzymes, colours,

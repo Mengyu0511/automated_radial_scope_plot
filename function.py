@@ -315,6 +315,7 @@ def get_conversion(scaffold,dataframe,column,r_number):
     single_R_group_df=pd.DataFrame(single_R_df,columns=["Mol","R1","R2","R3","R4","R5"])
     
     R_group_df=pd.DataFrame(single_R_group_df,columns=["Mol",column]).dropna()
+
     R_group_df["product_1_smiles"] = R_group_df["Mol"].apply(show_smiles)
 
 
