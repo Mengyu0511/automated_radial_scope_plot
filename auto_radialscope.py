@@ -27,7 +27,7 @@ default_r_setup = {'rest_label': "",  # Label of the atom in the radial scope pl
                     'value_outer_circle': [],
                     'min_max_value': [(0, 0), (100, 100)],
                     # Define minimum and maximum for each colorbar [(inner_min, outer_min),(inner_max, outer_max)]
-                    'rounding': True,  # ENABLE rounding if you want something like >99
+                    'rounding': False,  # ENABLE rounding if you want something like >99
                     'rounding_boundary': 99,  # cutoff for displaying >
                     'value_groups': [], # labels for smiles
                     # Labels for the outer circle, you can use math using $, any ~ will be interpreted as smiles string
@@ -74,7 +74,8 @@ def get_enzyme_dict(enzyme_name, df, scaffold, activity_col='conversion'):
     # 1. Filter df by enzyme name, remove nan activity and any duplicate products
     # (it may be necessary to do some filters before this, eg for a single paper)
     df = df[df['enzyme_name'] == enzyme_name]
-    df = df.dropna(subset=[activity_col])
+    df = df.dropna(subset=[activity_col]) # drop rows where activity column is nan
+    df = df.sort_values([activity_col], ascending=False) # sort values by activity column so highest is kept if duplicate
     df = df.drop_duplicates(subset=['product_1_smiles'], keep=False)
 
     # 2. get r groups in a df and merge

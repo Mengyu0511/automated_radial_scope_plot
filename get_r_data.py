@@ -53,12 +53,12 @@ def combine_enzyme_dict(enzyme_dict_1, enzyme_dict_2):
 
     for r in enzyme_dict_1:
         for smi in enzyme_dict_1[r]:
-            combined_data[r][smi] = [enzyme_dict_1[r].get(smi, None),
-                                     enzyme_dict_2[r].get(smi, None)]
+            combined_data[r][smi] = [enzyme_dict_1[r].get(smi, -1),
+                                     enzyme_dict_2[r].get(smi, -1)]
 
         for smi in enzyme_dict_2[r]:
             if smi not in combined_data[r]:
-                combined_data[r][smi] = [enzyme_dict_1[r].get(smi, None),
-                                         enzyme_dict_2[r].get(smi, None)]
+                combined_data[r][smi] = [enzyme_dict_1[r].get(smi, -1),
+                                         enzyme_dict_2[r].get(smi, -1)]
 
     return combined_data

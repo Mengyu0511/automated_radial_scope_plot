@@ -52,7 +52,7 @@ class RadialScope(object):
         The size of the matplotlib plot is always the same, which is why the hard coded center used for positioning on the atoms is likely fine.
     """
 
-    def __init__(self, settings_dict,*args):
+    def __init__(self, settings_dict, *args):
         """
         Calls the main constructur. 
 
@@ -249,8 +249,14 @@ class RadialScope(object):
                     else:
                         label_outer_circle[i+1]=str(value_outer_circle[i])
                 else:
-                    label_inner_circle[i+1]=str(value_inner_circle[i])
-                    label_outer_circle[i+1]=str(value_outer_circle[i])
+                    if value_inner_circle[i] < 0:
+                        label_inner_circle[i + 1] = ''
+                    else:
+                        label_inner_circle[i+1]=str(value_inner_circle[i])
+                    if value_outer_circle[i] < 0:
+                        label_outer_circle[i + 1] = ''
+                    else:
+                        label_outer_circle[i+1]=str(value_outer_circle[i])
             j=0
             for i,item in enumerate(value_groups):
                 if item[0]=='~':
