@@ -4,6 +4,10 @@ def remove_r_from_smi(smi, r_num):
 
     if smi.endswith(f"[*:{r_num}]"):
         smi = smi[:-5]
+
+    if smi == "[H]":  # if its just hydrogen, remove the brackets
+        smi = "H"
+
     return smi
 
 def get_smiles_and_activity(df, r_groups, activity_col='conversion', to_int=True):

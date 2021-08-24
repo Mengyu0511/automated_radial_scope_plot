@@ -52,7 +52,7 @@ def r_group_decomposition(df, scaffold):
 
     return r_group_df
 
-def make_H_r_groups_none(r_group_df, r_groups):
+def make_H_r_groups_none(r_group_df, r_groups, include_all_h=True):
     """
     To make the r_group_df easier to interpret,
     make any R_group which is just H into None.
@@ -62,8 +62,9 @@ def make_H_r_groups_none(r_group_df, r_groups):
 
     """
 
-    def remove_H(row, r_groups):
+    def remove_H(row, r_groups, include_all_h):
 
+        all_h = True
         for num in r_groups:
             r_string = f'R{num}'
             mol = row[r_string]
@@ -71,10 +72,17 @@ def make_H_r_groups_none(r_group_df, r_groups):
 
             if smi == f'[H][*:{num}]':
                 row[r_string] = None
+            else:
+                all_h = False
+
+        if all_h == True and include_all_h == True:  # if all the r groups were H, we actually want to keep these in!
+            for num in r_groups:
+                r_string = f'R{num}'
+                row[r_string] = Chem.MolFromSmiles(f'[H][*:{num}]')
 
         return row
 
-    r_group_df.apply(remove_H, args=[r_groups], axis=1)
+    r_group_df.apply(remove_H, args=[r_groups, include_all_h], axis=1)
 
     return r_group_df
 
@@ -134,10 +142,10 @@ def split_single_and_multi_r_groups(r_group_df, r_groups):
 
     return single_r_df, multi_r_df
 
-def get_r_df(df, scaffold):
+def get_r_df(df, scaffold, include_all_h=True):
     r_groups = r_groups_from_scaffold(scaffold)
     r_group_df = r_group_decomposition(df, scaffold)
-    r_group_df = make_H_r_groups_none(r_group_df, r_groups)
+    r_group_df = make_H_r_groups_none(r_group_df, r_groups, include_all_h=include_all_h)
     r_group_df = r_group_df_to_smiles(r_group_df, r_groups)
     single_df, multi_df = split_single_and_multi_r_groups(r_group_df, r_groups)
 
@@ -168,9 +176,11 @@ if __name__ == "__main__":
     r_groups = r_groups_from_scaffold(scaffold)
     r_group_df = r_group_decomposition(df, scaffold)
     r_group_df = make_H_r_groups_none(r_group_df, r_groups)
+
     r_group_df = r_group_df_to_smiles(r_group_df, r_groups)
     single_df, multi_df = split_single_and_multi_r_groups(r_group_df, r_groups)
 
     single_df = get_r_df(df, scaffold)
+    print(single_df.iloc[0])
 
     print(single_df)

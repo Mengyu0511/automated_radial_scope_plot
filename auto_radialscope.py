@@ -78,7 +78,7 @@ def get_r_setup_dict(r_num, enzyme_data,
 
     return r_dict
 
-def get_enzyme_dict(enzyme_name, df, scaffold, activity_col='conversion'):
+def get_enzyme_dict(enzyme_name, df, scaffold, activity_col='conversion', include_all_h=True):
     """ get the r_group data for a single enzyme """
 
     # 1. Filter df by enzyme name, remove nan activity and any duplicate products
@@ -90,7 +90,7 @@ def get_enzyme_dict(enzyme_name, df, scaffold, activity_col='conversion'):
 
     # 2. get r groups in a df and merge
     r_groups = r_groups_from_scaffold(scaffold)
-    r_group_df = get_r_df(df, scaffold)
+    r_group_df = get_r_df(df, scaffold, include_all_h=include_all_h)
     df = pd.merge(df, r_group_df, on='product_1_smiles')
 
     # 3. get smiles and activity for radial scope
@@ -103,14 +103,15 @@ def get_enzyme_dict(enzyme_name, df, scaffold, activity_col='conversion'):
 def make_auto_radial_scope(enzymes, df, scaffold_smi,
                            colours=['Blues', 'Greens'],
                            activity_col='conversion',
-                           angle_per_wedge=15):
+                           angle_per_wedge=15,
+                           include_all_h=True):
 
     # make scaffold_mol
     scaffold = Chem.MolFromSmiles(scaffold_smi)
 
     # get the r_group data for the two enzymes, save to dict
-    enz_1_data = get_enzyme_dict(enzymes[0], df, scaffold, activity_col=activity_col)
-    enz_2_data = get_enzyme_dict(enzymes[1], df, scaffold, activity_col=activity_col)
+    enz_1_data = get_enzyme_dict(enzymes[0], df, scaffold, activity_col=activity_col, include_all_h=include_all_h)
+    enz_2_data = get_enzyme_dict(enzymes[1], df, scaffold, activity_col=activity_col, include_all_h=include_all_h)
     combined_data = combine_enzyme_dict(enz_1_data, enz_2_data)
 
     # create radial scope settings
