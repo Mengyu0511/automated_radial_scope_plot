@@ -3,7 +3,10 @@ from rdkit import Chem
 from rdkit.Chem import PandasTools
 from rdkit.Chem import rdRGroupDecomposition
 from rdkit import RDLogger
+RDLogger.DisableLog('rdApp.info')
+RDLogger.DisableLog('rdApp.error')
 RDLogger.DisableLog('rdApp.warning')
+RDLogger.DisableLog('rdApp.debug')
 
 def r_groups_from_scaffold(scaffold):
     """
@@ -44,7 +47,7 @@ def r_group_decomposition(df, scaffold):
             mols_match_scaffold.append(mol)
 
     # Use RGroupDecompositionToFrame to get dataframe of R group decomposition
-    r_group_df = PandasTools.RGroupDecompositionToFrame(groups, mols_match_scaffold, include_core=False,
+    r_group_df = PandasTools.RGroupDecompositionToFrame(groups, mols_match_scaffold, include_core=True,
                                                         redraw_sidechains=False)
 
     return r_group_df
