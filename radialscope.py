@@ -87,7 +87,7 @@ class RadialScope(object):
         d2d.FinishDrawing()
         return d2d.GetDrawingText(), d2d, dm
 
-    def replace_label_with_smiles(self,svg_file='', smiles='C=C', search_index='~0'):
+    def replace_label_with_smiles(self, svg_file='', smiles='C=C', search_index='~0'):
         """
         draws a small organic rest, looks for the ~index comment in the complete svg, finds the glyphs and replaces them with the organic subsituent. 
         Note that this is hacky and the position of the organic subsituent likely needs to be fixed in a vector software such as Inkscape. 
@@ -289,7 +289,7 @@ class RadialScope(object):
             ).move(350,350).scale(self.settings['scalefactor']).save("substrate_scope.svg")
         new_svg=SVG('substrate_scope.svg')._data
         for item in replace_index:
-            new_svg=self.replace_label_with_smiles(svg_file=new_svg, smiles=item[1],search_index= item[0] )
+            new_svg=self.replace_label_with_smiles(svg_file=new_svg, smiles=item[1],search_index= item[0])
 
         if settings['use_bold_font']:
             new_svg.replace('font-weight:normal', 'font-weight:bold')

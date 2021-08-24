@@ -34,6 +34,14 @@ default_r_setup = {'rest_label': "",  # Label of the atom in the radial scope pl
                     'attach_atom_id': 0,
                 }
 
+def convert_long_smis_to_mol(list_smis, max_chars=4):
+    new_smis = []
+    for smi in list_smis:
+        if len(smi) >= max_chars:
+            smi = f'~{smi}'
+        new_smis.append(smi)
+    return new_smis
+
 
 def get_r_setup_dict(r_num, enzyme_data,
                      enzymes, colours,
@@ -58,7 +66,9 @@ def get_r_setup_dict(r_num, enzyme_data,
     r_dict['CMAPINNER'] = colours[0]
     r_dict['CMAPOUTER'] = colours[1]
 
-    r_dict['value_groups'] = list(enzyme_data[r_string].keys())  # {'R1': {'C': [50, 45]} }
+    smis = list(enzyme_data[r_string].keys())  # {'R1': {'C': [50, 45]} }
+    # smis = convert_long_smis_to_mol(smis, max_chars=4) # this causes the code to crash, don't use until fixed.
+    r_dict['value_groups'] = smis
 
     activity_data = list(enzyme_data[r_string].values()) # eg = [[50, 45], [13, 60], ..]
     r_dict['value_inner_circle'] = [val[0] for val in activity_data]
